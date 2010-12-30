@@ -16,18 +16,25 @@ ControllerManager = class(function(mgr)
     
     love.joystick.open(mgr.stickID)
     mgr.state = {
-      joystick = {
-        x = 0,
-        y = 0
-      },
+      joystick = vector(0, 0),
       buttons = {
         a = false,
         b = false,
         x = false,
-        y = false
+        y = false,
+        back = false,
+        guide = false,
+        start = false,
+        lbumper = false,
+        rbumper = false
       }
     }
     mgr.previous_state = {}
+    
+    mgr.debug = false
+    
+    mgr.logger = Logger(vector(10, 10))
+    
   else
     return nil
   end
@@ -52,7 +59,9 @@ function ControllerManager:update(dt)
   -- X 13
   -- Y 14
   
-  self.state.joystick.x, self.state.joystick.y = love.joystick.getAxes(self.stickID)
+  local x, y = love.joystick.getAxes(self.stickID)
+  
+  self.state.joystick = vector(x, y)
 
   self.state.buttons.start = love.joystick.isDown(self.stickID, 4)
   self.state.buttons.back = love.joystick.isDown(self.stickID, 5)
@@ -66,5 +75,48 @@ function ControllerManager:update(dt)
   self.state.buttons.x = love.joystick.isDown(self.stickID, 13)
   self.state.buttons.y = love.joystick.isDown(self.stickID, 14)
   
-  
+  if self.debug then
+    self.logger:update(dt)
+    
+    self.logger:addLine(string.format('Joystick #%i', self.stickID))
+    self.logger:addLine(string.format('x: %f, y: %f', self.state.joystick.x, self.state.joystick.y))
+
+    if self.state.buttons.start then
+      self.logger:addLine("start")
+    end
+    if self.state.buttons.back then
+      self.logger:addLine("back")
+    end
+    if self.state.buttons.guide then
+      self.logger:addLine("guide")
+    end
+
+    if self.state.buttons.lbumper then
+      self.logger:addLine("lbumper")
+    end
+    if self.state.buttons.rbumper then
+      self.logger:addLine("rbumper")
+    end
+
+    if self.state.buttons.a then
+      self.logger:addLine("A")
+    end
+    if self.state.buttons.b then
+      self.logger:addLine("B")
+    end
+    if self.state.buttons.x then
+      self.logger:addLine("X")
+    end
+    if self.state.buttons.y then
+      self.logger:addLine("Y")
+    end
+    
+  end
+end
+
+
+function ControllerManager:draw()
+  if self.debug then
+    self.logger:draw()
+  end
 end
