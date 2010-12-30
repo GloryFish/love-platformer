@@ -23,7 +23,7 @@ function love.load()
   }
   
   Gamestate.registerEvents()
-  Gamestate.switch(test_joystick)
+  Gamestate.switch(testing)
 end
 
 function love.update(dt)

@@ -13,6 +13,7 @@ ControllerManager = class(function(mgr)
   local count = love.joystick.getNumJoysticks()
   if count > 0 then
     mgr.stickID = 0
+    mgr.deadzone = 0.2
     
     love.joystick.open(mgr.stickID)
     mgr.state = {
@@ -60,8 +61,13 @@ function ControllerManager:update(dt)
   -- Y 14
   
   local x, y = love.joystick.getAxes(self.stickID)
+  local joy = vector(x, y)
   
-  self.state.joystick = vector(x, y)
+  if joy:len() < self.deadzone then
+    joy = vector(0, 0)
+  end
+  
+  self.state.joystick = joy
 
   self.state.buttons.start = love.joystick.isDown(self.stickID, 4)
   self.state.buttons.back = love.joystick.isDown(self.stickID, 5)
