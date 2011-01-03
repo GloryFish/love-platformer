@@ -41,7 +41,7 @@ Level = class(function(level, name)
 end)
 
 
-function Level:draw()
+function Level:draw()  
   for x, column in ipairs(self.tiles) do
     for y, char in ipairs(column) do
       love.graphics.drawq(self.tileset, 

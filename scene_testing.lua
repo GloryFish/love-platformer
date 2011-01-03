@@ -29,7 +29,10 @@ function testing.update(self, dt)
   testing.logger:update(dt)
   -- testing.logger:addLine(string.format('Particles: %i', particles:count()))
   controller:update(dt)
-  
+
+  player.position = player.position + (controller.state.joystick * player.speed * dt)
+
+
 end
 
 function testing.draw(self)
