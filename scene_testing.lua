@@ -24,11 +24,28 @@ function testing.enter(self, pre)
   
   love.graphics.setBackgroundColor(255, 255, 255, 255)
   
+  love.mouse.setVisible(true)
 end
 
 function testing.update(self, dt)
   testing.logger:update(dt)
-  -- testing.logger:addLine(string.format('Particles: %i', particles:count()))
+  
+  local mouse = vector(love.mouse.getX(), love.mouse.getY())
+  local tile = lvl:toTileCoords(mouse)
+  
+  tile = tile + vector(1, 1)
+  
+  testing.logger:addLine(string.format('World: %i, %i', mouse.x, mouse.y))
+  testing.logger:addLine(string.format('Tile: %i, %i', tile.x, tile.y))
+
+  -- testing.logger:addLine(string.format('%s', lvl.tiles[tile.x][tile.y]))
+  
+  if (lvl:pointIsWalkable(mouse)) then
+    testing.logger:addLine(string.format('Walkable'))
+  else
+    testing.logger:addLine(string.format('Wall'))
+  end
+  
   controller:update(dt)
   
   if controller.state.buttons.back then

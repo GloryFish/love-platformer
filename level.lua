@@ -16,7 +16,7 @@ Level = class(function(level, name)
   -- a set of quads for each image in the tileset indexed by
   -- an ascii character, a string representing the initial level layout,
   -- and the size of each tile in the tileset.
-  level.tileset, level.quads, level.tileString, level.tileSize, level.playerStart = love.filesystem.load(string.format('resources/maps/%s.lua', name))()
+  level.tileset, level.quads, level.tileString, level.tileSize, level.gravity = love.filesystem.load(string.format('resources/maps/%s.lua', name))()
 
   -- Now we build an array of characters from the tileString
   level.tiles = {}
@@ -68,15 +68,31 @@ function Level:draw()
 end
 
 
-function Level:toWorldCoords(coords)
+function Level:pointIsWalkable(point)
+  local tilePoint = self:toTileCoords(point)
+  tilePoint = tilePoint + vector(1, 1)
+  
+  if self.tiles[tilePoint.x] ~= nil then
+    if self.tiles[tilePoint.x][tilePoint.y] == '#' then
+      return false
+    end
+  end
+  
+  return true
+end
+
+function Level:toWorldCoords(point)
   local world = vector(
-    (coords.x - 1) * self.tileSize * self.scale,
-    (coords.y - 1) * self.tileSize * self.scale
+    (point.x - 1) * self.tileSize * self.scale,
+    (point.y - 1) * self.tileSize * self.scale
   )
   
   return world
 end
 
-function Level:toTileCoords(coords)
-  return coords * self.tileSize * self.scale
+function Level:toTileCoords(point)
+  local coords = vector(math.floor(point.x / (self.tileSize * self.scale)),
+                        math.floor(point.y / (self.tileSize * self.scale)))
+
+  return coords
 end

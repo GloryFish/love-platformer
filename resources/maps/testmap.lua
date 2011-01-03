@@ -47,14 +47,14 @@ local tileString = [[
                         #
                         #
 #                       #
-#         P             #
-#         ######        #
+#      #  P    #        #
+#      #########        #
 #                       #
 #                       #
 #   ##############  #   #
 ######  ######  #########
 ]]
 
-local playerStart = vector(10, 10)
+local gravity = vector(0, 100)
 
-return tileset, quads, tileString, tileWidth, tileHeight, playerStart
+return tileset, quads, tileString, tileWidth, tileHeight, gravity
