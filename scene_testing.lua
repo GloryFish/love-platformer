@@ -15,39 +15,52 @@ testing = Gamestate.new()
 function testing.enter(self, pre)
   testing.logger = Logger(vector(10, 10))
   controller = ControllerManager()
-  controller.debug = true
   
-  local particleImage = love.graphics.newImage('resources/square.png')
+  tileWidth, tileHeight = 16, 16 -- 10 x 6
+  tilesetWidth, tilesetHeight = 160, 112
   
-  particles = love.graphics.newParticleSystem(particleImage, 500)
+  ninjatiles = love.graphics.newImage('resources/ninja.png')
   
-  ppos = vector(400, 300)
-  pspeed = 500
-  
-	particles:setEmissionRate(500)
-	particles:setSpeed(300, 800)
-	particles:setGravity(0)
-	particles:setSize(2, 1)
-	particles:setColor(255, 255, 255, 255, 58, 128, 255, 0)
-	particles:setPosition(ppos.x, ppos.y)
-	particles:setLifetime(-1)
-	particles:setParticleLife(1)
-	particles:setDirection(0)
-	particles:setSpread(360)
-	particles:setRadialAcceleration(-2000)
-	particles:setTangentialAcceleration(1000)
-  particles:setRotation(0, 4)
-  particles:setSpin(-3, 3)
+  local quadInfo = { 
+    { ' ', 5 * tileWidth, 0 * tileHeight}, -- 1 = grass 
+    { '#', 9 * tileWidth, 6 * tileHeight}, -- 2 = box
+  }
 
-  particles:start()
+  quads = {}
+  for _,info in ipairs(quadInfo) do
+    -- info[1] = character, info[2]= x, info[3] = y
+    quads[info[1]] = love.graphics.newQuad(info[2], info[3], tileWidth, tileHeight, tilesetWidth, tilesetHeight)
+  end
 
+  
+  local tileString = [[
+                         
+          #              
+                         
+                         
+     #     #             
+    ##############  #    
+#########################
+]]
+  
+    
+    TileTable = {}
 
-  -- particles:setPosition(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
-  -- particles:setSpeed(10, 50)
-  -- particles:setColor(255, 255, 255, 255, 255, 255, 255, 0)
-  -- particles:setSprite(particleImage)
-  
-  
+    local width = #(tileString:match("[^\n]+"))
+
+    for x = 1,width,1 do TileTable[x] = {} end
+
+    local x,y = 1,1
+    for row in tileString:gmatch("[^\n]+") do
+      assert(#row == width, 'Map is not aligned: width of row ' .. tostring(y) .. ' should be ' .. tostring(width) .. ', but it is ' .. tostring(#row))
+      x = 1
+      for character in row:gmatch(".") do
+        TileTable[x][y] = character
+        x = x + 1
+      end
+      y=y+1
+    end
+    
 end
 
 function testing.update(self, dt)
@@ -55,32 +68,19 @@ function testing.update(self, dt)
   -- testing.logger:addLine(string.format('Particles: %i', particles:count()))
   controller:update(dt)
   
-  particles:setPosition(ppos.x, ppos.y)
-  ppos = ppos + (controller.state.joystick * pspeed * dt)
-
-	particles:setEmissionRate(100)
-	particles:setSpeed(50, 100)
-	particles:setColor(255, 255, 255, 255, 58, 128, 255, 0)
-
-  if controller.state.buttons.a then
-    particles:setEmissionRate(500)
-  	particles:setSpeed(300, 1000)
-  	particles:setColor(255, 255, 255, 255, 255, 128, 155, 0)
-  else
-  end
-  
-  if controller.state.buttons.back then
-    love.event.push('q')
-  end
-  
-  particles:update(dt)
-  
 end
 
 function testing.draw(self)
   testing.logger:draw()
   controller:draw(dt)
-  love.graphics.draw(particles)
+
+
+  for x,column in ipairs(TileTable) do
+    for y,char in ipairs(column) do
+      love.graphics.drawq(ninjatiles, quads[char], (x - 1) * tileWidth, (y - 1) * tileHeight)
+    end
+  end
+  
 end
 
 function testing.leave(self)
