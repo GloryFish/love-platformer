@@ -25,6 +25,11 @@ Player = class(function(player, pos)
   player.animations['standing'].quads = {
     love.graphics.newQuad(0, 0, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
   }
+  
+  player.animations['jumping'] = {}
+  player.animations['jumping'].quads = {
+    love.graphics.newQuad(1 * player.tileSize, 3 * player.tileSize, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
+  }
 
   player.animations['walking'] = {}
   player.animations['walking'].frameInterval = 0.2
@@ -49,6 +54,7 @@ Player = class(function(player, pos)
   player.state = 'standing'
   
   player.velocity = vector(0, 0)
+  player.jump = vector(0, -50)
   
 end)
 
@@ -71,6 +77,9 @@ function Player:setMovement(movement)
   end    
 end
 
+
+-- TODO: Fix state code, make sure proper state transitions are maintained
+-- make sure there is running, jumping, falling with correct changing between them
 function Player:setState(state)
   if (self.state ~= state) then
     self.state = state
@@ -85,10 +94,41 @@ function Player:setState(state)
       self.animation.frame = 1
     end
 
+    if state == 'jumping' then
+      self.animation.current = 'jumping'
+      self.animation.frame = 1
+      if self.velocity.y > -100 then
+        self.velocity = self.velocity + self.jump
+      end
+    end
+
   end
   
 end
 
+-- Returns the world coordinates of the Player's corners. If pos is supplied it returns what the Player's
+-- coordinates would be at that position
+function Player:getCorners(pos)
+  if pos == nil then
+    pos = self.position
+  end
+  
+  local margin = 4
+  
+  local ul, ur, bl, br = vector(math.floor(pos.x - (self.tileSize / 2 * self.scale)), math.floor(pos.y - (self.tileSize / 2 * self.scale))), -- UL
+                         vector(math.floor(pos.x + (self.tileSize / 2 * self.scale)), math.floor(pos.y - (self.tileSize / 2 * self.scale))), -- UR
+                         vector(math.floor(pos.x - (self.tileSize / 2 * self.scale)), math.floor(pos.y + (self.tileSize / 2 * self.scale))), -- BL
+                         vector(math.floor(pos.x + (self.tileSize / 2 * self.scale)), math.floor(pos.y + (self.tileSize / 2 * self.scale))) -- BR
+
+  -- Make the wisth just a bt smaller cause our ninja is skinny
+  ul.x = ul.x + margin
+  ur.x = ur.x - margin
+  bl.x = bl.x + margin
+  br.x = br.x - margin
+  
+  return ul, ur, bl, br
+  
+end
 
 function Player:update(dt)
   self.animation.elapsed = self.animation.elapsed + dt
