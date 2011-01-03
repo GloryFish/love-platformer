@@ -19,7 +19,8 @@ function testing.enter(self, pre)
   controller = ControllerManager()
   
   lvl = Level('testmap')
-  player = Player(vector(200, 16))
+  
+  player = Player(lvl.playerStart)
   
   love.graphics.setBackgroundColor(255, 255, 255, 255)
   

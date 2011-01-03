@@ -16,7 +16,7 @@ Level = class(function(level, name)
   -- a set of quads for each image in the tileset indexed by
   -- an ascii character, a string representing the initial level layout,
   -- and the size of each tile in the tileset.
-  level.tileset, level.quads, level.tileString, tileSize = love.filesystem.load(string.format('resources/maps/%s.lua', name))()
+  level.tileset, level.quads, level.tileString, level.tileSize, level.playerStart = love.filesystem.load(string.format('resources/maps/%s.lua', name))()
 
   -- Now we build an array of characters from the tileString
   level.tiles = {}
@@ -33,24 +33,50 @@ Level = class(function(level, name)
     assert(#row == width, 'Map is not aligned: width of row ' .. tostring(y) .. ' should be ' .. tostring(width) .. ', but it is ' .. tostring(#row))
     x = 1
     for character in row:gmatch(".") do
-      level.tiles[x][y] = character
+      
+      -- Handle player start
+      if character == 'P' then
+        level:setPlayerStart(x, y)
+        level.tiles[x][y] = ' '
+      else
+        level.tiles[x][y] = character
+      end
       x = x + 1
     end
     y = y + 1
   end
 end)
 
+function Level:setPlayerStart(x, y)
+  -- playerStart should be placed in the center of the tile so we need to offset the world coordinates by half tileSize
+  local coords = self:toWorldCoords(vector(x, y))
+  self.playerStart = coords + vector(self.tileSize * self.scale / 2, self.tileSize * self.scale / 2)
+end
 
 function Level:draw()  
   for x, column in ipairs(self.tiles) do
     for y, char in ipairs(column) do
       love.graphics.drawq(self.tileset, 
                           self.quads[char], 
-                          (x - 1) * tileSize * self.scale, 
-                          (y - 1) * tileSize * self.scale,
+                          (x - 1) * self.tileSize * self.scale, 
+                          (y - 1) * self.tileSize * self.scale,
                           0,
                           self.scale,
                           self.scale)
     end
   end
+end
+
+
+function Level:toWorldCoords(coords)
+  local world = vector(
+    (coords.x - 1) * self.tileSize * self.scale,
+    (coords.y - 1) * self.tileSize * self.scale
+  )
+  
+  return world
+end
+
+function Level:toTileCoords(coords)
+  return coords * self.tileSize * self.scale
 end

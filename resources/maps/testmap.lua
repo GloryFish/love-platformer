@@ -12,6 +12,8 @@
 --  Copyright 2011 GloryFish.org. All rights reserved.
 -- 
 
+require 'vector'
+
 local tileset = love.graphics.newImage('resources/ninja.png')
 tileset:setFilter('nearest', 'nearest')
 
@@ -45,7 +47,7 @@ local tileString = [[
                         #
                         #
 #                       #
-#                       #
+#         P             #
 #         ######        #
 #                       #
 #                       #
@@ -53,4 +55,6 @@ local tileString = [[
 ######  ######  #########
 ]]
 
-return tileset, quads, tileString, tileWidth, tileHeight
+local playerStart = vector(10, 10)
+
+return tileset, quads, tileString, tileWidth, tileHeight, playerStart
