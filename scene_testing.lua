@@ -10,6 +10,7 @@ require 'logger'
 require 'vector'
 require 'controller_manager'
 require 'level'
+require 'player'
 
 testing = Gamestate.new()
 
@@ -18,7 +19,10 @@ function testing.enter(self, pre)
   controller = ControllerManager()
   
   lvl = Level('testmap')
-    
+  player = Player(vector(200, 16))
+  
+  love.graphics.setBackgroundColor(255, 255, 255, 255)
+  
 end
 
 function testing.update(self, dt)
@@ -33,6 +37,7 @@ function testing.draw(self)
   controller:draw(dt)
   
   lvl:draw()
+  player:draw()
 end
 
 function testing.leave(self)
