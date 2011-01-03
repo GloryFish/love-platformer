@@ -12,9 +12,13 @@ require 'vector'
 Level = class(function(level, name)
   level.scale = 2
   
-  
+  -- Load a map file which will give us a tileset image, 
+  -- a set of quads for each image in the tileset indexed by
+  -- an ascii character, a string representing the initial level layout,
+  -- and the size of each tile in the tileset.
   level.tileset, level.quads, level.tileString, tileSize = love.filesystem.load(string.format('resources/maps/%s.lua', name))()
 
+  -- Now we build an array of characters from the tileString
   level.tiles = {}
 
   local width = #(level.tileString:match("[^\n]+"))
@@ -34,7 +38,6 @@ Level = class(function(level, name)
     end
     y = y + 1
   end
-
 end)
 
 
