@@ -30,16 +30,15 @@ function testing.update(self, dt)
   -- testing.logger:addLine(string.format('Particles: %i', particles:count()))
   controller:update(dt)
 
-  if (controller.state.joystick.x > 0) then -- Moving right
-    player:movingRight()
+  player:setMovement(controller.state.joystick)
+  
+  if controller.state.joystick:len() > 0.1 then
+    player:setState('walking')
+  else
+    player:setState('standing')
   end
 
-  if (controller.state.joystick.x < 0) then -- Moving left
-    player:movingLeft()
-  end
-
-  player.position = player.position + (controller.state.joystick * player.speed * dt)
-
+  player:update(dt)
 
 end
 
