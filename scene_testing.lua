@@ -29,14 +29,12 @@ function testing.update(self, dt)
   testing.logger:update(dt)
   -- testing.logger:addLine(string.format('Particles: %i', particles:count()))
   controller:update(dt)
+  
+  if controller.state.buttons.back then
+    love.event.push('q')
+  end
 
   player:setMovement(controller.state.joystick)
-  
-  if controller.state.joystick:len() > 0.1 then
-    player:setState('walking')
-  else
-    player:setState('standing')
-  end
 
   player:update(dt)
 
