@@ -51,10 +51,11 @@ Player = class(function(player, pos)
   player.flip = 1
   player.position = pos
   player.speed = 100
+  player.onground = false
   player.state = 'standing'
   
   player.velocity = vector(0, 0)
-  player.jump = vector(0, -50)
+  player.jumpVector = vector(0, -200)
   
 end)
 
@@ -70,40 +71,38 @@ function Player:setMovement(movement)
     self.flip = -1
   end
 
-  if movement.x == 0 then
-    self:setState('standing')
-  else
-    self:setState('walking')
-  end    
+  if self.onground then
+    if movement.x == 0 then
+      self:setAnimation('standing')
+    else
+      self:setAnimation('walking')
+    end    
+  end
 end
 
+-- Adjusts the player's y position so that it is standing on the floor value
+function Player:setFloorPosition(floor)
+  self.position.y = floor - self.tileSize / 2 * self.scale
+end
+
+function Player:jump()
+  self.velocity = self.velocity + self.jumpVector
+  self.onground = false
+  self:setAnimation('jumping')
+end
+
+function Player:land()
+  self.onground = true
+  self:setAnimation('standing')
+end
 
 -- TODO: Fix state code, make sure proper state transitions are maintained
 -- make sure there is running, jumping, falling with correct changing between them
-function Player:setState(state)
-  if (self.state ~= state) then
-    self.state = state
-
-    if state == 'walking' then
-      self.animation.current = 'walking'
-      self.animation.frame = 1
-    end
-
-    if state == 'standing' then
-      self.animation.current = 'standing'
-      self.animation.frame = 1
-    end
-
-    if state == 'jumping' then
-      self.animation.current = 'jumping'
-      self.animation.frame = 1
-      if self.velocity.y > -100 then
-        self.velocity = self.velocity + self.jump
-      end
-    end
-
+function Player:setAnimation(animation)
+  if (self.animation.current ~= animation) then
+    self.animation.current = animation
+    self.animation.frame = 1
   end
-  
 end
 
 -- Returns the world coordinates of the Player's corners. If pos is supplied it returns what the Player's
@@ -160,5 +159,4 @@ function Player:draw()
                       self.scale,
                       self.offset.x,
                       self.offset.y)
-  
 end

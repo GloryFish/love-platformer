@@ -27,6 +27,12 @@ function testing.enter(self, pre)
   love.mouse.setVisible(true)
 end
 
+function testing.keypressed(self, key, unicode)
+  if key == 'escape' then
+    love.event.push('q')
+  end
+end
+
 function testing.update(self, dt)
   testing.logger:update(dt)
   
@@ -37,7 +43,11 @@ function testing.update(self, dt)
   
   testing.logger:addLine(string.format('World: %i, %i', mouse.x, mouse.y))
   testing.logger:addLine(string.format('Tile: %i, %i', tile.x, tile.y))
-  testing.logger:addLine(string.format('State: %s', player.state))
+  if player.onground then
+    testing.logger:addLine(string.format('State: %s', 'On Ground'))
+  else
+    testing.logger:addLine(string.format('State: %s', 'Jumping'))
+  end
 
   if (lvl:pointIsWalkable(mouse)) then
     testing.logger:addLine(string.format('Walkable'))
@@ -54,19 +64,17 @@ function testing.update(self, dt)
   -- Apply any controller movement to the player
   player:setMovement(controller.state.joystick)
   
-  -- TODO: Fix jumping invocation, use a newpress parameter, check to make sur eplayer isn't already jumping 
-  if controller.state.buttons.newpress.a then
-    assert(false)
-    testing.logger:addLine('Button PRESSSSS!!')
+  if controller.state.buttons.newpress.a and player.onground then
+    player:jump()
   end
   
   -- Here we modify the player's velocity, handle collisions etc
-  
-  player.velocity = player.velocity + lvl.gravity * dt
+
+  player.velocity = player.velocity + lvl.gravity * dt -- Gravity
   
   local newPos = player.position + player.velocity * dt
-  
-  local ul, ur, bl, br = player:getCorners(newPos)
+  local curUL, curUR, curBL, curBR = player:getCorners()
+  local newUL, newUR, newBL, newBR = player:getCorners(newPos)
   
   -- TODO: Change the checking here so that what we actually check isn't the potential point
   -- Rather, we should check only the potential component in a single direction
@@ -75,35 +83,46 @@ function testing.update(self, dt)
   -- That should fix any hanging issues
   
   if player.velocity.y > 0 then -- Falling
-    if lvl:pointIsWalkable(bl) == false or lvl:pointIsWalkable(br) == false then -- Collide with bottom
+    local testBL = vector(curBL.x, newBL.y)
+    local testBR = vector(curBR.x, newBR.y)
+    
+    if lvl:pointIsWalkable(testBL) == false or lvl:pointIsWalkable(testBR) == false then -- Collide with bottom
+      player:setFloorPosition(lvl:floorPosition(testBL))
       player.velocity.y = 0
+      player.onground = true
     end
   end
 
   if player.velocity.y < 0 then -- Jumping
-    if lvl:pointIsWalkable(ul) == false or lvl:pointIsWalkable(ur) == false then -- Collide with top
+    local testUL = vector(curUL.x, newUL.y)
+    local testUR = vector(curUR.x, newUR.y)
+
+    if lvl:pointIsWalkable(testUL) == false or lvl:pointIsWalkable(testUR) == false then -- Collide with top
       player.velocity.y = 0
     end
   end
-
-  -- Update corners
+  
   newPos = player.position + player.velocity * dt
-  ul, ur, bl, br = player:getCorners(newPos)
+  curUL, curUR, curBL, curBR = player:getCorners()
+  newUL, newUR, newBL, newBR = player:getCorners(newPos)
   
   if player.velocity.x > 0 then -- Collide with right side
-    if lvl:pointIsWalkable(ur) == false or lvl:pointIsWalkable(br) == false then
+    local testUR = vector(newUR.x, curUR.y)
+    local testBR = vector(newBR.x, curBR.y - 1)
+
+    if lvl:pointIsWalkable(testUR) == false or lvl:pointIsWalkable(testBR) == false then
       player.velocity.x = 0
     end
   end
 
   if player.velocity.x < 0 then -- Collide with left side
-    if lvl:pointIsWalkable(ul) == false or lvl:pointIsWalkable(bl) == false then
+    local testUL = vector(newUL.x, curUL.y)
+    local testBL = vector(newBL.x, curBL.y - 1)
+
+    if lvl:pointIsWalkable(testUL) == false or lvl:pointIsWalkable(testBL) == false then
       player.velocity.x = 0
     end
   end
-
-
-
   
   -- Here we update the player, the final velocity will be applied here
   player:update(dt)

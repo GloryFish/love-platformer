@@ -56,7 +56,7 @@ end
 function Level:draw()  
   for x, column in ipairs(self.tiles) do
     for y, char in ipairs(column) do
-      love.graphics.drawq(self.tileset, 
+      love.graphics.drawq(self.tileset,
                           self.quads[char], 
                           (x - 1) * self.tileSize * self.scale, 
                           (y - 1) * self.tileSize * self.scale,
@@ -80,6 +80,14 @@ function Level:pointIsWalkable(point)
   
   return true
 end
+
+-- This function takes a world point returns the Y position of the top edge of the matching tile in world space
+function Level:floorPosition(point)
+  local y = math.floor(point.y / (self.tileSize * self.scale))
+  
+  return y * (self.tileSize * self.scale)
+end
+
 
 function Level:toWorldCoords(point)
   local world = vector(
