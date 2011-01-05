@@ -10,6 +10,12 @@ require 'class'
 require 'vector'
 
 Player = class(function(player, pos)
+
+  -- Sounds
+  player.sounds = {
+    jump = love.audio.newSource('resources/sounds/jump.mp3', 'static'),
+  } 
+
   -- Tileset
   player.tileset = love.graphics.newImage('resources/ninja.png')
   player.tileset:setFilter('nearest', 'nearest')
@@ -59,6 +65,7 @@ Player = class(function(player, pos)
   player.onground = false
   player.onwall = false
   player.state = 'standing'
+  player.movement = vector(0, 0) -- This holds a vector containing the last movement input recieved
   
   player.velocity = vector(0, 0)
   player.jumpVector = vector(0, -200)
@@ -67,6 +74,7 @@ end)
 
 -- Call during update with the joystick vector
 function Player:setMovement(movement)
+  self.movement = movement
   self.velocity.x = movement.x * self.speed
   
   if movement.x > 0 then
@@ -95,6 +103,7 @@ function Player:jump()
   self.velocity = self.velocity + self.jumpVector
   self.onground = false
   self:setAnimation('jumping')
+  love.audio.play(self.sounds.jump)
 end
 
 function Player:wallslide()
@@ -106,6 +115,7 @@ function Player:land()
   self.onground = true
   self.onwall = false
   self:setAnimation('standing')
+  love.audio.play(self.sounds.land)
 end
 
 -- TODO: Fix state code, make sure proper state transitions are maintained
@@ -146,7 +156,11 @@ function Player:update(dt)
   
   -- Handle animation
   if #self.animations[self.animation.current].quads > 1 then -- More than one frame
-    if self.animation.elapsed > self.animations[self.animation.current].frameInterval then -- Switch to next frame
+    local interval = self.animations[self.animation.current].frameInterval
+    interval = interval + (interval - (interval * math.abs(self.movement.x)))
+    
+    
+    if self.animation.elapsed > interval then -- Switch to next frame
       self.animation.frame = self.animation.frame + 1
       if self.animation.frame > #self.animations[self.animation.current].quads then -- Aaaand back around
         self.animation.frame = 1
