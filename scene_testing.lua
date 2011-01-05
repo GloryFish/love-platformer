@@ -15,10 +15,10 @@ require 'player'
 testing = Gamestate.new()
 
 function testing.enter(self, pre)
-  testing.logger = Logger(vector(10, 10))
+  testing.logger = Logger(vector(40, 40))
   controller = ControllerManager()
   
-  lvl = Level('testmap')
+  lvl = Level('irc')
   
   player = Player(lvl.playerStart)
   
