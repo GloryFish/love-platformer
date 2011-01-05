@@ -55,6 +55,6 @@ local tileString = [[
 ######  ######  #########
 ]]
 
-local gravity = vector(0, 300)
+local gravity = vector(0, 600)
 
 return tileset, quads, tileString, tileWidth, gravity

@@ -71,7 +71,14 @@ function testing.update(self, dt)
   end
   
   -- Apply gravity
-  player.velocity = player.velocity + lvl.gravity * dt -- Gravity
+  local gravityAmount = 1
+  
+  if controller.state.buttons.a and player.velocity.y < 0 then
+    gravityAmount = 0.5
+  end
+
+  player.velocity = player.velocity + lvl.gravity * dt * gravityAmount -- Gravity
+  
   
   local newPos = player.position + player.velocity * dt
   local curUL, curUR, curBL, curBR = player:getCorners()

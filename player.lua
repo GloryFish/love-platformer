@@ -102,16 +102,6 @@ function Player:wallslide()
   self:setAnimation('wallsliding')
 end
 
-function Player:stopWallsliding()
-  self.onwall = false
-  
-  if self.onground then
-    self:setAnimation('standing')
-  else
-    self:setAnimation('jumping')
-  end
-end
-
 function Player:land()
   self.onground = true
   self.onwall = false
