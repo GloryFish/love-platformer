@@ -50,7 +50,7 @@ end)
 function Level:setPlayerStart(x, y)
   -- playerStart should be placed in the center of the tile so we need to offset the world coordinates by half tileSize
   local coords = self:toWorldCoords(vector(x, y))
-  self.playerStart = coords + vector(math.floor(self.tileSize * self.scale / 2), math.floor(self.tileSize * self.scale / 2) - 1)
+  self.playerStart = coords + vector(math.floor(self.tileSize * self.scale / 2), math.floor(self.tileSize * self.scale / 2))
 end
 
 function Level:draw()  

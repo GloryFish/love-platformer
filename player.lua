@@ -62,14 +62,13 @@ Player = class(function(player, pos)
   player.flip = 1
   player.position = pos
   player.speed = 100
-  player.onground = false
+  player.onground = true
   player.onwall = false
   player.state = 'standing'
   player.movement = vector(0, 0) -- This holds a vector containing the last movement input recieved
   
   player.velocity = vector(0, 0)
   player.jumpVector = vector(0, -200)
-  
 end)
 
 -- Call during update with the joystick vector
@@ -141,7 +140,7 @@ function Player:getCorners(pos)
                          vector(math.floor(pos.x - (self.tileSize / 2 * self.scale)), math.floor(pos.y + (self.tileSize / 2 * self.scale))), -- BL
                          vector(math.floor(pos.x + (self.tileSize / 2 * self.scale)), math.floor(pos.y + (self.tileSize / 2 * self.scale))) -- BR
 
-  -- Make the wisth just a bt smaller cause our ninja is skinny
+  -- Make the width just a bt smaller cause our ninja is skinny
   ul.x = ul.x + margin
   ur.x = ur.x - margin
   bl.x = bl.x + margin
@@ -158,7 +157,6 @@ function Player:update(dt)
   if #self.animations[self.animation.current].quads > 1 then -- More than one frame
     local interval = self.animations[self.animation.current].frameInterval
     interval = interval + (interval - (interval * math.abs(self.movement.x)))
-    
     
     if self.animation.elapsed > interval then -- Switch to next frame
       self.animation.frame = self.animation.frame + 1

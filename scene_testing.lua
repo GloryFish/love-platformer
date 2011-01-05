@@ -76,19 +76,22 @@ function testing.update(self, dt)
   if controller.state.buttons.a and player.velocity.y < 0 then
     gravityAmount = 0.5
   end
-
+  
   player.velocity = player.velocity + lvl.gravity * dt * gravityAmount -- Gravity
   
+  if dt > 0.5 then
+    player.velocity.y = 0
+  end
+  
+  -- if temp == true then
+  --   player.velocity = player.velocity + lvl.gravity * dt * gravityAmount -- Gravity
+  -- else
+  --   temp = true
+  -- end
   
   local newPos = player.position + player.velocity * dt
   local curUL, curUR, curBL, curBR = player:getCorners()
   local newUL, newUR, newBL, newBR = player:getCorners(newPos)
-  
-  -- TODO: Change the checking here so that what we actually check isn't the potential point
-  -- Rather, we should check only the potential component in a single direction
-  -- i.e. if we are checking falling, check the current actual position but with the y velocity added
-  -- if we are checkign running, check the current actual position with the x velocity added
-  -- That should fix any hanging issues
   
   if player.velocity.y > 0 then -- Falling
     local testBL = vector(curBL.x, newBL.y)
