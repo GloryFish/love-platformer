@@ -8,6 +8,7 @@
 
 require 'class'
 require 'vector'
+require 'utility'
 
 ControllerManager = class(function(mgr)
   local count = love.joystick.getNumJoysticks()
@@ -28,7 +29,18 @@ ControllerManager = class(function(mgr)
       guide = false,
       start = false,
       lbumper = false,
-      rbumper = false
+      rbumper = false,
+      newpress = {
+        a = false,
+        b = false,
+        x = false,
+        y = false,
+        back = false,
+        guide = false,
+        start = false,
+        lbumper = false,
+        rbumper = false
+      }
     }
   }
   mgr.previous_state = {}
@@ -39,7 +51,7 @@ ControllerManager = class(function(mgr)
 end)
 
 function ControllerManager:update(dt)
-  self.previous_state = self.state;
+  self.previous_state = deepcopy(self.state);
   
   -- Dpad-Up 0
   -- Dpad-Left 1
@@ -77,6 +89,19 @@ function ControllerManager:update(dt)
   self.state.buttons.b = love.joystick.isDown(self.stickID, 12)
   self.state.buttons.x = love.joystick.isDown(self.stickID, 13)
   self.state.buttons.y = love.joystick.isDown(self.stickID, 14)
+  
+  -- Check for new button presses
+  self.state.buttons.newpress.start = self.state.buttons.start and not self.previous_state.buttons.start 
+  self.state.buttons.newpress.back  = self.state.buttons.back  and not self.previous_state.buttons.back 
+  self.state.buttons.newpress.guide = self.state.buttons.guide and not self.previous_state.buttons.guide 
+       
+  self.state.buttons.newpress.lbumper = self.state.buttons.lbumper and not self.previous_state.buttons.lbumper 
+  self.state.buttons.newpress.rbumper = self.state.buttons.rbumper and not self.previous_state.buttons.rbumper 
+       
+  self.state.buttons.newpress.a = self.state.buttons.a and not self.previous_state.buttons.a 
+  self.state.buttons.newpress.b = self.state.buttons.b and not self.previous_state.buttons.b 
+  self.state.buttons.newpress.x = self.state.buttons.x and not self.previous_state.buttons.x 
+  self.state.buttons.newpress.y = self.state.buttons.y and not self.previous_state.buttons.y 
   
   if self.debug then
     self.logger:update(dt)

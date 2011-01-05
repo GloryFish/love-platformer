@@ -36,7 +36,7 @@ end
 
 local tileString = [[
                       ###
-          P             #
+                        #
                         #
                         #
                         #
@@ -47,7 +47,7 @@ local tileString = [[
                         #
                         #
 #                       #
-#      #       #        #
+#      #   P   #        #
 #      #########        #
 #                       #
 #                       #

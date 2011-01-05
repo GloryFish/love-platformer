@@ -55,8 +55,9 @@ function testing.update(self, dt)
   player:setMovement(controller.state.joystick)
   
   -- TODO: Fix jumping invocation, use a newpress parameter, check to make sur eplayer isn't already jumping 
-  if controller.state.buttons.a then
-    player:setState('jumping')
+  if controller.state.buttons.newpress.a then
+    assert(false)
+    testing.logger:addLine('Button PRESSSSS!!')
   end
   
   -- Here we modify the player's velocity, handle collisions etc
