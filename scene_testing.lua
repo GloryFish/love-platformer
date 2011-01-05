@@ -64,12 +64,13 @@ function testing.update(self, dt)
   -- Apply any controller movement to the player
   player:setMovement(controller.state.joystick)
   
-  if controller.state.buttons.newpress.a and player.onground then
-    player:jump()
+  if controller.state.buttons.newpress.a then
+    if player.onground then
+      player:jump()
+    end
   end
   
-  -- Here we modify the player's velocity, handle collisions etc
-
+  -- Apply gravity
   player.velocity = player.velocity + lvl.gravity * dt -- Gravity
   
   local newPos = player.position + player.velocity * dt

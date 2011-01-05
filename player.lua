@@ -31,6 +31,11 @@ Player = class(function(player, pos)
     love.graphics.newQuad(1 * player.tileSize, 3 * player.tileSize, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
   }
 
+  player.animations['wallsliding'] = {}
+  player.animations['wallsliding'].quads = {
+    love.graphics.newQuad(5 * player.tileSize, 6 * player.tileSize, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
+  }
+
   player.animations['walking'] = {}
   player.animations['walking'].frameInterval = 0.2
   player.animations['walking'].quads = {
@@ -52,6 +57,7 @@ Player = class(function(player, pos)
   player.position = pos
   player.speed = 100
   player.onground = false
+  player.onwall = false
   player.state = 'standing'
   
   player.velocity = vector(0, 0)
@@ -91,8 +97,24 @@ function Player:jump()
   self:setAnimation('jumping')
 end
 
+function Player:wallslide()
+  self.onwall = true
+  self:setAnimation('wallsliding')
+end
+
+function Player:stopWallsliding()
+  self.onwall = false
+  
+  if self.onground then
+    self:setAnimation('standing')
+  else
+    self:setAnimation('jumping')
+  end
+end
+
 function Player:land()
   self.onground = true
+  self.onwall = false
   self:setAnimation('standing')
 end
 
