@@ -19,7 +19,8 @@ function love.load()
   math.random(); math.random(); math.random()  
   
   fonts = {
-    default = love.graphics.newFont('resources/fonts/silk.ttf', 24)
+    default = love.graphics.newFont('resources/fonts/silk.ttf', 24),
+    large =  love.graphics.newFont('resources/fonts/silk.ttf', 48)
   }
   
   

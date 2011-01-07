@@ -15,6 +15,9 @@ require 'scene_particles'
 menu = Gamestate.new()
 
 function menu.enter(self, pre)
+  menu.title = 'Love Platformer'
+  menu.subtitle = 'an engine by Jay Roberts'
+  
   menu.entries = {
     {
       title = 'IRC scene',
@@ -33,6 +36,9 @@ function menu.enter(self, pre)
     {
       title = 'Particles',
       scene = particle_test
+    },
+    {
+      title = 'Quit'
     }
   }
   
@@ -83,11 +89,15 @@ function menu.update(self, dt)
   end
   
   if input.state.buttons.newpress.select then
-    if menu.entries[menu.index].level ~= nil then
-      menu.entries[menu.index].scene.level = menu.entries[menu.index].level
+    if menu.entries[menu.index].title == 'Quit' then
+      love.event.push('q')
+    else
+      if menu.entries[menu.index].level ~= nil then
+        menu.entries[menu.index].scene.level = menu.entries[menu.index].level
+      end
+
+      Gamestate.switch(menu.entries[menu.index].scene)
     end
-    
-    Gamestate.switch(menu.entries[menu.index].scene)
   end
 
   if input.state.buttons.newpress.cancel then
@@ -96,7 +106,17 @@ function menu.update(self, dt)
 end
 
 function menu.draw(self)
+  love.graphics.setColor(self.colors.text.r,
+                         self.colors.text.g,
+                         self.colors.text.b,
+                         self.colors.text.a);
+  
+  love.graphics.setFont(fonts.large)
+  love.graphics.print(menu.title, 40, 20);
+  
   love.graphics.setFont(fonts.default)
+
+  love.graphics.print(menu.subtitle, 40, 60);
   
   love.graphics.setBackgroundColor(self.colors.background.r,
                                    self.colors.background.g,

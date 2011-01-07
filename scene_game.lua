@@ -34,8 +34,8 @@ function game.enter(self, pre)
   camera = Camera()
   camera.bounds = {
     top = 0,
-    right = lvl:getWidth(),
-    bottom = lvl:getHeight(),
+    right = math.max(lvl:getWidth(), love.graphics.getWidth()),
+    bottom = math.max(lvl:getHeight(), love.graphics.getHeight()),
     left = 0
   }
   camera.position = player.position
@@ -44,12 +44,6 @@ function game.enter(self, pre)
   love.graphics.setBackgroundColor(255, 255, 255, 255)
   
   love.mouse.setVisible(true)
-end
-
-function game.keypressed(self, key, unicode)
-  if input.state.buttons.newpress.back then
-    Gamestate.switch(menu)
-  end
 end
 
 function game.update(self, dt)
