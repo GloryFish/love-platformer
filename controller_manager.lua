@@ -9,6 +9,7 @@
 require 'class'
 require 'vector'
 require 'utility'
+require 'logger'
 
 ControllerManager = class(function(mgr)
   if love.joystick.getNumJoysticks() == 0 then

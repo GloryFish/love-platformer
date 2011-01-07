@@ -40,8 +40,8 @@ function testing.enter(self, pre)
 end
 
 function testing.keypressed(self, key, unicode)
-  if key == 'escape' then
-    love.event.push('q')
+  if input.state.buttons.newpress.back then
+    Gamestate.switch(menu)
   end
 end
 

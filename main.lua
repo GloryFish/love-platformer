@@ -7,9 +7,8 @@
 -- 
 
 require 'gamestate'
-require 'scene_testing'
-require 'scene_particles'
-require 'scene_test_joystick'
+require 'input'
+require 'scene_menu'
 
 function love.load()
   love.graphics.setCaption('Love Platformer')
@@ -23,8 +22,11 @@ function love.load()
     default = love.graphics.newFont('resources/fonts/silk.ttf', 24)
   }
   
+  
+  input = Input()
+  
   Gamestate.registerEvents()
-  Gamestate.switch(testing)
+  Gamestate.switch(menu)
 end
 
 function love.update(dt)
