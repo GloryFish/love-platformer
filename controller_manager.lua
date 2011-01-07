@@ -11,26 +11,18 @@ require 'vector'
 require 'utility'
 
 ControllerManager = class(function(mgr)
-  local count = love.joystick.getNumJoysticks()
-  -- assert(count > 0, 'Joystick not available')
+  if love.joystick.getNumJoysticks() == 0 then
+    mgr.enabled = false
+  else
+    mgr.enabled = true
 
-  mgr.stickID = 0
-  mgr.deadzone = 0.2
+    mgr.stickID = 0
+    mgr.deadzone = 0.2
   
-  love.joystick.open(mgr.stickID)
-  mgr.state = {
-    joystick = vector(0, 0),
-    buttons = {
-      a = false,
-      b = false,
-      x = false,
-      y = false,
-      back = false,
-      guide = false,
-      start = false,
-      lbumper = false,
-      rbumper = false,
-      newpress = {
+    love.joystick.open(mgr.stickID)
+    mgr.state = {
+      joystick = vector(0, 0),
+      buttons = {
         a = false,
         b = false,
         x = false,
@@ -39,15 +31,27 @@ ControllerManager = class(function(mgr)
         guide = false,
         start = false,
         lbumper = false,
-        rbumper = false
+        rbumper = false,
+        newpress = {
+          a = false,
+          b = false,
+          x = false,
+          y = false,
+          back = false,
+          guide = false,
+          start = false,
+          lbumper = false,
+          rbumper = false
+        }
       }
     }
-  }
-  mgr.previous_state = {}
+    
+    mgr.previous_state = {}
   
-  mgr.debug = false
+    mgr.debug = false
   
-  mgr.logger = Logger(vector(10, 10))
+    mgr.logger = Logger(vector(10, 10))
+  end
 end)
 
 function ControllerManager:update(dt)

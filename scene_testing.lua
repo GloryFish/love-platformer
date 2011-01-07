@@ -9,6 +9,7 @@
 require 'logger'
 require 'vector'
 require 'controller_manager'
+require 'input'
 require 'level'
 require 'player'
 require 'camera'
@@ -18,8 +19,8 @@ testing = Gamestate.new()
 function testing.enter(self, pre)
   testing.logger = Logger(vector(40, 40))
 
-  controller = ControllerManager()
-
+  input = Input()
+  
   lvl = Level('steps')
 
   player = Player(lvl.playerStart)
@@ -67,16 +68,16 @@ function testing.update(self, dt)
     testing.logger:addLine(string.format('Wall'))
   end
   
-  controller:update(dt)
+  input:update(dt)
   
-  if controller.state.buttons.back then
+  if input.state.buttons.back then
     love.event.push('q')
   end
 
   -- Apply any controller movement to the player
-  player:setMovement(controller.state.joystick)
+  player:setMovement(input.state.movement)
   
-  if controller.state.buttons.newpress.a then
+  if input.state.buttons.newpress.jump then
     if player.onground then
       player:jump()
     end
@@ -85,7 +86,7 @@ function testing.update(self, dt)
   -- Apply gravity
   local gravityAmount = 1
   
-  if controller.state.buttons.a and player.velocity.y < 0 then
+  if input.state.buttons.jump and player.velocity.y < 0 then
     gravityAmount = 0.5
   end
   
@@ -169,7 +170,6 @@ function testing.draw(self)
   -- UI
   love.graphics.translate(0, 0)  
   testing.logger:draw()
-  controller:draw(dt)
 end
 
 function testing.leave(self)
