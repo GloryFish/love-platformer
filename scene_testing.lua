@@ -33,6 +33,7 @@ function testing.enter(self, pre)
     left = 0
   }
   camera.position = player.position
+  camera:update(0)
   
   love.graphics.setBackgroundColor(255, 255, 255, 255)
   

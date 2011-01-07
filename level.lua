@@ -53,7 +53,8 @@ function Level:setPlayerStart(x, y)
   self.playerStart = coords + vector(math.floor(self.tileSize * self.scale / 2), math.floor(self.tileSize * self.scale / 2))
 end
 
-function Level:draw()  
+function Level:draw()
+  love.graphics.setColor(255, 255, 255, 255)
   for x, column in ipairs(self.tiles) do
     for y, char in ipairs(column) do
       love.graphics.drawq(self.tileset,
