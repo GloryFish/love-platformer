@@ -67,6 +67,13 @@ function Level:draw()
   end
 end
 
+function Level:getWidth()
+  return #self.tiles * self.tileSize * self.scale
+end
+
+function Level:getHeight()
+  return #self.tiles[1] * self.tileSize * self.scale
+end
 
 function Level:pointIsWalkable(point)
   local tilePoint = self:toTileCoords(point)

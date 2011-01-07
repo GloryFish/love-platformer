@@ -16,7 +16,8 @@ function particle_test.enter(self, pre)
   particle_test.logger = Logger(vector(10, 10))
   controller = ControllerManager()
   
-  local particleImage = love.graphics.newImage('resources/square.png')
+  local particleImage = love.graphics.newImage('resources/dust.png')
+  particleImage:setFilter('nearest', 'nearest')
   
   particles = love.graphics.newParticleSystem(particleImage, 500)
   

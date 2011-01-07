@@ -11,16 +11,27 @@ require 'vector'
 require 'controller_manager'
 require 'level'
 require 'player'
+require 'camera'
 
 testing = Gamestate.new()
 
 function testing.enter(self, pre)
   testing.logger = Logger(vector(40, 40))
+
   controller = ControllerManager()
-  
-  lvl = Level('irc')
-  
+
+  lvl = Level('steps')
+
   player = Player(lvl.playerStart)
+
+  camera = Camera()
+  camera.bounds = {
+    top = 0,
+    right = lvl:getWidth(),
+    bottom = lvl:getHeight(),
+    left = 0
+  }
+  camera.position = player.position
   
   love.graphics.setBackgroundColor(255, 255, 255, 255)
   
@@ -48,6 +59,7 @@ function testing.update(self, dt)
   else
     testing.logger:addLine(string.format('State: %s', 'Jumping'))
   end
+  testing.logger:addLine(string.format('Width: %i Height: %i', lvl:getWidth(), lvl:getHeight()))
 
   if (lvl:pointIsWalkable(mouse)) then
     testing.logger:addLine(string.format('Walkable'))
@@ -137,15 +149,27 @@ function testing.update(self, dt)
   
   -- Here we update the player, the final velocity will be applied here
   player:update(dt)
+  
+  camera.focus = player.position
+  camera:update(dt)
+
 
 end
 
 function testing.draw(self)
-  testing.logger:draw()
-  controller:draw(dt)
-  
+  love.graphics.push()
+
+  -- Game
+  love.graphics.translate(-camera.offset.x, -camera.offset.y)
   lvl:draw()
   player:draw()
+
+  love.graphics.pop()
+
+  -- UI
+  love.graphics.translate(0, 0)  
+  testing.logger:draw()
+  controller:draw(dt)
 end
 
 function testing.leave(self)

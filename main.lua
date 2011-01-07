@@ -8,6 +8,7 @@
 
 require 'gamestate'
 require 'scene_testing'
+require 'scene_particles'
 require 'scene_test_joystick'
 
 function love.load()

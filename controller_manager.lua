@@ -12,7 +12,7 @@ require 'utility'
 
 ControllerManager = class(function(mgr)
   local count = love.joystick.getNumJoysticks()
-  assert(count > 0, 'Joystick not available')
+  -- assert(count > 0, 'Joystick not available')
 
   mgr.stickID = 0
   mgr.deadzone = 0.2
