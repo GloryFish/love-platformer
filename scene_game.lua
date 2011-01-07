@@ -1,27 +1,33 @@
 -- 
---  scene_test.lua
+--  scene_game.lua
 --  love-platformer
 --  
---  Created by Jay Roberts on 2010-12-25.
---  Copyright 2010 GloryFish.org. All rights reserved.
+--  Created by Jay Roberts on 2011-01-06.
+--  Copyright 2011 GloryFish.org. All rights reserved.
 -- 
 
 require 'logger'
 require 'vector'
 require 'controller_manager'
-require 'input'
 require 'level'
 require 'player'
 require 'camera'
 
-testing = Gamestate.new()
+game = Gamestate.new()
+game.level = ''
 
-function testing.enter(self, pre)
-  testing.logger = Logger(vector(40, 40))
-
-  input = Input()
+function game.enter(self, pre)
+  assert(game.level ~= '', 'game.level not set')
   
-  lvl = Level('steps')
+  game.logger = Logger(vector(40, 40))
+  
+  if input == nil then
+    require 'input'
+    input = Input()
+  end
+  
+
+  lvl = Level(game.level)
 
   player = Player(lvl.playerStart)
 
@@ -40,33 +46,33 @@ function testing.enter(self, pre)
   love.mouse.setVisible(true)
 end
 
-function testing.keypressed(self, key, unicode)
+function game.keypressed(self, key, unicode)
   if input.state.buttons.newpress.back then
     Gamestate.switch(menu)
   end
 end
 
-function testing.update(self, dt)
-  testing.logger:update(dt)
+function game.update(self, dt)
+  game.logger:update(dt)
   
   local mouse = vector(love.mouse.getX(), love.mouse.getY())
   local tile = lvl:toTileCoords(mouse)
   
   tile = tile + vector(1, 1)
   
-  testing.logger:addLine(string.format('World: %i, %i', mouse.x, mouse.y))
-  testing.logger:addLine(string.format('Tile: %i, %i', tile.x, tile.y))
+  game.logger:addLine(string.format('World: %i, %i', mouse.x, mouse.y))
+  game.logger:addLine(string.format('Tile: %i, %i', tile.x, tile.y))
   if player.onground then
-    testing.logger:addLine(string.format('State: %s', 'On Ground'))
+    game.logger:addLine(string.format('State: %s', 'On Ground'))
   else
-    testing.logger:addLine(string.format('State: %s', 'Jumping'))
+    game.logger:addLine(string.format('State: %s', 'Jumping'))
   end
-  testing.logger:addLine(string.format('Width: %i Height: %i', lvl:getWidth(), lvl:getHeight()))
+  game.logger:addLine(string.format('Width: %i Height: %i', lvl:getWidth(), lvl:getHeight()))
 
   if (lvl:pointIsWalkable(mouse)) then
-    testing.logger:addLine(string.format('Walkable'))
+    game.logger:addLine(string.format('Walkable'))
   else
-    testing.logger:addLine(string.format('Wall'))
+    game.logger:addLine(string.format('Wall'))
   end
   
   input:update(dt)
@@ -158,7 +164,7 @@ function testing.update(self, dt)
 
 end
 
-function testing.draw(self)
+function game.draw(self)
   love.graphics.push()
 
   -- Game
@@ -170,8 +176,8 @@ function testing.draw(self)
 
   -- UI
   love.graphics.translate(0, 0)  
-  testing.logger:draw()
+  game.logger:draw()
 end
 
-function testing.leave(self)
+function game.leave(self)
 end

@@ -8,6 +8,7 @@
 require 'vector'
 
 -- Game scenes
+require 'scene_game'
 require 'scene_testing'
 require 'scene_particles'
 
@@ -15,6 +16,16 @@ menu = Gamestate.new()
 
 function menu.enter(self, pre)
   menu.entries = {
+    {
+      title = 'IRC scene',
+      scene = game,
+      level = 'irc'
+    },
+    {
+      title = 'Steps',
+      scene = game,
+      level = 'steps'
+    },
     {
       title = 'Testing scene',
       scene = testing
@@ -72,6 +83,10 @@ function menu.update(self, dt)
   end
   
   if input.state.buttons.newpress.select then
+    if menu.entries[menu.index].level ~= nil then
+      menu.entries[menu.index].scene.level = menu.entries[menu.index].level
+    end
+    
     Gamestate.switch(menu.entries[menu.index].scene)
   end
 
@@ -90,7 +105,7 @@ function menu.draw(self)
 
   local currentLinePosition = 0
   
-  for index, line in pairs(self.entries) do
+  for index, entry in pairs(self.entries) do
     love.graphics.setColor(self.colors.text.r,
                            self.colors.text.g,
                            self.colors.text.b,
@@ -103,7 +118,7 @@ function menu.draw(self)
                              self.colors.highlight.a);
     end
 
-    love.graphics.print(line.title, 
+    love.graphics.print(entry.title, 
                         self.position.x, 
                         self.position.y + currentLinePosition);
 
