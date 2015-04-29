@@ -1,10 +1,10 @@
--- 
+--
 --  player.lua
 --  redditgamejam-04
---  
+--
 --  Created by Jay Roberts on 2010-12-10.
 --  Copyright 2010 GloryFish.org. All rights reserved.
--- 
+--
 
 require 'class'
 require 'vector'
@@ -14,7 +14,7 @@ Player = class(function(player, pos)
   -- Sounds
   player.sounds = {
     jump = love.audio.newSource('resources/sounds/jump.mp3', 'static'),
-  } 
+  }
 
   -- Tileset
   player.tileset = love.graphics.newImage('resources/ninja.png')
@@ -26,12 +26,12 @@ Player = class(function(player, pos)
 
   -- Quads, animation frames
   player.animations = {}
-  
+
   player.animations['standing'] = {}
   player.animations['standing'].quads = {
     love.graphics.newQuad(0, 0, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
   }
-  
+
   player.animations['jumping'] = {}
   player.animations['jumping'].quads = {
     love.graphics.newQuad(1 * player.tileSize, 3 * player.tileSize, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
@@ -52,12 +52,12 @@ Player = class(function(player, pos)
     love.graphics.newQuad(4 * player.tileSize, 2 * player.tileSize, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight()),
     love.graphics.newQuad(5 * player.tileSize, 2 * player.tileSize, player.tileSize, player.tileSize, player.tileset:getWidth(), player.tileset:getHeight())
   }
-  
+
   player.animation = {}
   player.animation.current = 'standing'
   player.animation.frame = 1
   player.animation.elapsed = 0
-  
+
   -- Instance vars
   player.flip = 1
   player.position = pos
@@ -66,7 +66,7 @@ Player = class(function(player, pos)
   player.onwall = false
   player.state = 'standing'
   player.movement = vector(0, 0) -- This holds a vector containing the last movement input recieved
-  
+
   player.velocity = vector(0, 0)
   player.jumpVector = vector(0, -200)
 end)
@@ -75,7 +75,7 @@ end)
 function Player:setMovement(movement)
   self.movement = movement
   self.velocity.x = movement.x * self.speed
-  
+
   if movement.x > 0 then
     self.flip = 1
   end
@@ -89,7 +89,7 @@ function Player:setMovement(movement)
       self:setAnimation('standing')
     else
       self:setAnimation('walking')
-    end    
+    end
   end
 end
 
@@ -132,9 +132,9 @@ function Player:getCorners(pos)
   if pos == nil then
     pos = self.position
   end
-  
+
   local margin = 4
-  
+
   local ul, ur, bl, br = vector(math.floor(pos.x - (self.tileSize / 2 * self.scale)), math.floor(pos.y - (self.tileSize / 2 * self.scale))), -- UL
                          vector(math.floor(pos.x + (self.tileSize / 2 * self.scale)), math.floor(pos.y - (self.tileSize / 2 * self.scale))), -- UR
                          vector(math.floor(pos.x - (self.tileSize / 2 * self.scale)), math.floor(pos.y + (self.tileSize / 2 * self.scale))), -- BL
@@ -145,19 +145,19 @@ function Player:getCorners(pos)
   ur.x = ur.x - margin
   bl.x = bl.x + margin
   br.x = br.x - margin
-  
+
   return ul, ur, bl, br
-  
+
 end
 
 function Player:update(dt)
   self.animation.elapsed = self.animation.elapsed + dt
-  
+
   -- Handle animation
   if #self.animations[self.animation.current].quads > 1 then -- More than one frame
     local interval = self.animations[self.animation.current].frameInterval
     interval = interval + (interval - (interval * math.abs(self.movement.x)))
-    
+
     if self.animation.elapsed > interval then -- Switch to next frame
       self.animation.frame = self.animation.frame + 1
       if self.animation.frame > #self.animations[self.animation.current].quads then -- Aaaand back around
@@ -166,21 +166,21 @@ function Player:update(dt)
       self.animation.elapsed = 0
     end
   end
-  
+
   -- Apply velocity to position
   self.position = self.position + self.velocity * dt
 end
-  
+
 function Player:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  
-  love.graphics.drawq(self.tileset,
-                      self.animations[self.animation.current].quads[self.animation.frame], 
-                      self.position.x, 
-                      self.position.y,
-                      0,
-                      self.scale * self.flip,
-                      self.scale,
-                      self.offset.x,
-                      self.offset.y)
+
+  love.graphics.draw(self.tileset,
+                     self.animations[self.animation.current].quads[self.animation.frame],
+                     self.position.x,
+                     self.position.y,
+                     0,
+                     self.scale * self.flip,
+                     self.scale,
+                     self.offset.x,
+                     self.offset.y)
 end

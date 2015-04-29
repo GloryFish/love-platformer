@@ -1,10 +1,10 @@
--- 
+--
 --  scene_menu.lua
 --  love-platformer
---  
+--
 --  Created by Jay Roberts on 2011-01-06.
 --  Copyright 2011 GloryFish.org. All rights reserved.
--- 
+--
 require 'vector'
 
 -- Game scenes
@@ -17,7 +17,7 @@ menu = Gamestate.new()
 function menu.enter(self, pre)
   menu.title = 'Love Platformer'
   menu.subtitle = 'an engine by Jay Roberts'
-  
+
   menu.entries = {
     {
       title = 'IRC scene',
@@ -41,7 +41,7 @@ function menu.enter(self, pre)
       title = 'Quit'
     }
   }
-  
+
   menu.colors = {
     text = {
       r = 255,
@@ -62,18 +62,18 @@ function menu.enter(self, pre)
       a = 255
     }
   }
-  
+
   menu.position = vector(100, 100)
-  
+
   menu.lineHeight = 20
-  
+
   menu.index = 1
-  
+
 end
 
 function menu.update(self, dt)
   input:update(dt)
-  
+
   if input.state.buttons.newpress.down then
     menu.index = menu.index + 1
     if menu.index > #menu.entries then
@@ -87,10 +87,10 @@ function menu.update(self, dt)
       menu.index = #menu.entries
     end
   end
-  
+
   if input.state.buttons.newpress.select then
     if menu.entries[menu.index].title == 'Quit' then
-      love.event.push('q')
+      love.event.push('quit')
     else
       if menu.entries[menu.index].level ~= nil then
         menu.entries[menu.index].scene.level = menu.entries[menu.index].level
@@ -101,7 +101,7 @@ function menu.update(self, dt)
   end
 
   if input.state.buttons.newpress.cancel then
-    love.event.push('q')
+    love.event.push('quit')
   end
 end
 
@@ -110,21 +110,21 @@ function menu.draw(self)
                          self.colors.text.g,
                          self.colors.text.b,
                          self.colors.text.a);
-  
+
   love.graphics.setFont(fonts.large)
   love.graphics.print(menu.title, 40, 20);
-  
+
   love.graphics.setFont(fonts.default)
 
   love.graphics.print(menu.subtitle, 40, 60);
-  
+
   love.graphics.setBackgroundColor(self.colors.background.r,
                                    self.colors.background.g,
                                    self.colors.background.b,
                                    self.colors.background.a);
 
   local currentLinePosition = 0
-  
+
   for index, entry in pairs(self.entries) do
     love.graphics.setColor(self.colors.text.r,
                            self.colors.text.g,
@@ -138,8 +138,8 @@ function menu.draw(self)
                              self.colors.highlight.a);
     end
 
-    love.graphics.print(entry.title, 
-                        self.position.x, 
+    love.graphics.print(entry.title,
+                        self.position.x,
                         self.position.y + currentLinePosition);
 
     currentLinePosition = currentLinePosition + self.lineHeight;

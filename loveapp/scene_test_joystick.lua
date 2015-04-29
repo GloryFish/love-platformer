@@ -1,10 +1,10 @@
--- 
+--
 --  scene_test_joystick.lua
 --  love-platformer
---  
+--
 --  Created by Jay Roberts on 2010-12-25.
 --  Copyright 2010 GloryFish.org. All rights reserved.
--- 
+--
 
 require 'logger'
 require 'vector'
@@ -21,9 +21,9 @@ end
 function test_joystick.update(self, dt)
   test_joystick.logger:update(dt)
   controller:update(dt)
-  
+
   if controller.state.buttons.back then
-    love.event.push('q')
+    love.event.push('quit')
   end
 end
 
